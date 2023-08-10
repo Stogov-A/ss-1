@@ -1,4 +1,4 @@
-package com.poluhin.ss.demo.controller;
+package com.poluhin.ss.demo.domain.model;
 
 import lombok.Data;
 

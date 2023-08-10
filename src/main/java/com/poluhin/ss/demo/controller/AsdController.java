@@ -1,5 +1,6 @@
 package com.poluhin.ss.demo.controller;
 
+import com.poluhin.ss.demo.domain.model.AuthenticationReq;
 import com.poluhin.ss.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/login")
+@RequestMapping(value = "/asd")
 public class AsdController {
     private final UserService userService;
 

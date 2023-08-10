@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.sql.DataSource;
 
@@ -31,50 +32,58 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain basicApiFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
+                .headers(AbstractHttpConfigurer::disable)
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(a -> a.requestMatchers(new AntPathRequestMatcher("/asd")).hasRole("USER"))
                 .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers("/resource", "/resource/**").permitAll()
+                        authorize.requestMatchers(
+        new AntPathRequestMatcher("/resource"),
+        new AntPathRequestMatcher("/resource/**"),
+        new AntPathRequestMatcher("/login"))
+                                .permitAll()
                                 .anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults())
+                //.httpBasic(Customizer.withDefaults())
                 .apply(jwtConfigurator)
 
         ;
 
         return http.build();
     }
+
     @Bean
     public static PasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public static DataSource dataSource() {
-        return new EmbeddedDatabaseBuilder()
-                .setType(H2)
-                .addScript(JdbcDaoImpl.DEFAULT_USER_SCHEMA_DDL_LOCATION)
-                .build();
-    }
-
-    @Bean
-    public static UserDetailsService userDetailsService(DataSource dataSource) {
-        UserDetails user = User.builder()
-                .username("user")
-                .password(bCryptPasswordEncoder().encode("user"))
-                .roles("USER")
-                .build();
-
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password(bCryptPasswordEncoder().encode("admin"))
-                .roles("ADMIN")
-                .build();
-
-        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
-        jdbcUserDetailsManager.createUser(user);
-        jdbcUserDetailsManager.createUser(admin);
-
-        return jdbcUserDetailsManager;
-    }
+//    @Bean
+//    public static DataSource dataSource() {
+//        return new EmbeddedDatabaseBuilder()
+//                .setType(H2)
+//                .addScript(JdbcDaoImpl.DEFAULT_USER_SCHEMA_DDL_LOCATION)
+//                .build();
+//    }
+//
+//    @Bean
+//    public static UserDetailsService userDetailsService(DataSource dataSource) {
+//        UserDetails user = User.builder()
+//                .username("user")
+//                .password(bCryptPasswordEncoder().encode("user"))
+//                .roles("USER")
+//                .build();
+//
+//        UserDetails admin = User.builder()
+//                .username("admin")
+//                .password(bCryptPasswordEncoder().encode("admin"))
+//                .roles("ADMIN")
+//                .build();
+//
+//        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
+//        jdbcUserDetailsManager.createUser(user);
+//        jdbcUserDetailsManager.createUser(admin);
+//
+//        return jdbcUserDetailsManager;
+//    }
 
 }
