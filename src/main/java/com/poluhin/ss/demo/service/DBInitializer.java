@@ -5,6 +5,10 @@ import com.poluhin.ss.demo.domain.entity.UserEntity;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import static com.poluhin.ss.demo.domain.entity.Role.ROLE_ADMIN;
 import static com.poluhin.ss.demo.domain.entity.Role.ROLE_USER;
 
@@ -28,6 +32,18 @@ public class DBInitializer {
         if (!adminExists()) {
             addAdmin();
         }
+        addUser();
+    }
+
+    private void addUser() {
+        UserEntity user = new UserEntity();
+        user.setName("user");
+        user.setPassword("user");
+
+        Set<RoleEntity> roleEntitySet = new HashSet<>();
+        roleEntitySet.add(roleService.findRoleByName(ROLE_USER.name()).get());
+        user.setRoles(roleEntitySet);
+        userService.addNewUser(user);
     }
 
     private boolean adminRoleExists() {
@@ -59,7 +75,9 @@ public class DBInitializer {
         admin.setName("admin");
         admin.setPassword("admin");
 
-        admin.setRoles(roleService.findAll());
+        Set<RoleEntity> roleEntitySet = new HashSet<>();
+        roleEntitySet.add(roleService.findRoleByName(ROLE_ADMIN.name()).get());
+        admin.setRoles(roleEntitySet);
         userService.addNewUser(admin);
     }
 }
