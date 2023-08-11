@@ -56,7 +56,7 @@ class ResourceControllerTest {
                 .andExpect(jsonPath("$.path", is("PATH")));
     }
 
-    @WithMockUser()
+    @WithMockUser(roles = "ADMIN")
     @Test
     void createResourceObject() throws Exception {
         int id = 33;
@@ -66,7 +66,7 @@ class ResourceControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(authenticated().withUsername("user"))
-                .andExpect(authenticated().withRoles("USER"))
+                .andExpect(authenticated().withRoles("ADMIN"))
                 .andExpect(content().string(String.valueOf(id)));
     }
 }
