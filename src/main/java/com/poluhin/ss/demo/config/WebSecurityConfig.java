@@ -32,11 +32,10 @@ public class WebSecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(a -> a.requestMatchers(new AntPathRequestMatcher("/asd")).hasRole("USER"))
-                .authorizeHttpRequests(a -> a.requestMatchers(new AntPathRequestMatcher("/resource")).hasRole("ADMIN"))
+                .authorizeHttpRequests(a -> a.requestMatchers(new AntPathRequestMatcher("/resource")).hasRole("USER"))
+                .authorizeHttpRequests(a -> a.requestMatchers(new AntPathRequestMatcher("/resource/**")).hasRole("ADMIN"))
                 .authorizeHttpRequests(authorize ->
                         authorize.requestMatchers(
-        new AntPathRequestMatcher("/resource/**"),
         new AntPathRequestMatcher("/login"))
                                 .permitAll()
                                 .anyRequest().authenticated())

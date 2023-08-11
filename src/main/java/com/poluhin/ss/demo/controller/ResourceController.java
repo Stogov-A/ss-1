@@ -19,9 +19,9 @@ public class ResourceController {
     private final ResourceObjectService service;
 
     @PostMapping
-    public ResponseEntity<Long> createResourceObject(@AuthenticationPrincipal UserEntity user) {
-       // val result = service.save(object);
-        return ok(user.getId());
+    public ResponseEntity<Integer> createResourceObject(@RequestBody ResourceObject object) {
+        val result = service.save(object);
+        return ok(result);
     }
 
     @GetMapping("/{id}")
