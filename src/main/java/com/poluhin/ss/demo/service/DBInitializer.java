@@ -5,8 +5,8 @@ import com.poluhin.ss.demo.domain.entity.UserEntity;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import static com.poluhin.ss.demo.service.Role.ROLE_ADMIN;
-import static com.poluhin.ss.demo.service.Role.ROLE_USER;
+import static com.poluhin.ss.demo.domain.entity.Role.ROLE_ADMIN;
+import static com.poluhin.ss.demo.domain.entity.Role.ROLE_USER;
 
 @Service
 @RequiredArgsConstructor

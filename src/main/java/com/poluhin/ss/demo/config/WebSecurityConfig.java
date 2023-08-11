@@ -3,7 +3,9 @@ package com.poluhin.ss.demo.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.*;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -18,10 +20,6 @@ import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import javax.sql.DataSource;
-
-import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.H2;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -32,22 +30,17 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain basicApiFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
-                .headers(AbstractHttpConfigurer::disable)
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(a -> a.requestMatchers(new AntPathRequestMatcher("/asd")).hasRole("USER"))
+                .authorizeHttpRequests(a -> a.requestMatchers(new AntPathRequestMatcher("/resource")).hasRole("ADMIN"))
                 .authorizeHttpRequests(authorize ->
                         authorize.requestMatchers(
-        new AntPathRequestMatcher("/resource"),
         new AntPathRequestMatcher("/resource/**"),
         new AntPathRequestMatcher("/login"))
                                 .permitAll()
                                 .anyRequest().authenticated())
-                //.httpBasic(Customizer.withDefaults())
-                .apply(jwtConfigurator)
-
-        ;
+                .apply(jwtConfigurator);
 
         return http.build();
     }
@@ -57,33 +50,10 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-//    @Bean
-//    public static DataSource dataSource() {
-//        return new EmbeddedDatabaseBuilder()
-//                .setType(H2)
-//                .addScript(JdbcDaoImpl.DEFAULT_USER_SCHEMA_DDL_LOCATION)
-//                .build();
-//    }
-//
-//    @Bean
-//    public static UserDetailsService userDetailsService(DataSource dataSource) {
-//        UserDetails user = User.builder()
-//                .username("user")
-//                .password(bCryptPasswordEncoder().encode("user"))
-//                .roles("USER")
-//                .build();
-//
-//        UserDetails admin = User.builder()
-//                .username("admin")
-//                .password(bCryptPasswordEncoder().encode("admin"))
-//                .roles("ADMIN")
-//                .build();
-//
-//        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
-//        jdbcUserDetailsManager.createUser(user);
-//        jdbcUserDetailsManager.createUser(admin);
-//
-//        return jdbcUserDetailsManager;
-//    }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+            throws Exception {
+        return config.getAuthenticationManager();
+    }
 
 }
