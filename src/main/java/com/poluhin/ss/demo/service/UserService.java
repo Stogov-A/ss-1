@@ -10,34 +10,32 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
-    private final RoleService roleService;
     private final PasswordEncoder encoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByName(username).orElseThrow();
+        return userRepository.findByName(username).blockOptional().orElseThrow();
     }
 
     public boolean findFirstBySpecificRoles(String roleName) {
-        RoleEntity roleEntity = roleService.findRoleByName(roleName).orElse(null);
-        if (Objects.nonNull(roleEntity)) {
-            return userRepository.findUserEntityByRolesContains(roleEntity).isPresent();
-        }
+//       // Mono<RoleEntity> roleByName = roleService.findRoleByName(roleName);
+//      //  if (Boolean.TRUE.equals(roleByName.hasElement().blockOptional().orElse(false))) {
+//            return userRepository.findUserEntityByRolesContains(roleByName.block()).isPresent();
+//     //   }
         return false;
     }
 
     public void addNewUser(UserEntity userEntity) {
-        if (userRepository.findByName(userEntity.getName()).isPresent()) {
-            throw new EntityExistsException("User name: " + userEntity.getName() + "is already exist");
+        if (Boolean.TRUE.equals(userRepository.findByName(userEntity.getName()).hasElement().block())) {
+            return;
         }
         userEntity.setPassword(encoder.encode(userEntity.getPassword()));
-        userRepository.save(userEntity);
+        userRepository.save(userEntity).block();
     }
 }

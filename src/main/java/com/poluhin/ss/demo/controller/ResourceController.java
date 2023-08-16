@@ -1,15 +1,10 @@
 package com.poluhin.ss.demo.controller;
 
-import com.poluhin.ss.demo.domain.entity.UserEntity;
 import com.poluhin.ss.demo.domain.model.*;
 import com.poluhin.ss.demo.service.*;
 import lombok.*;
-import org.springframework.http.*;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import static org.springframework.http.ResponseEntity.badRequest;
-import static org.springframework.http.ResponseEntity.ok;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,14 +14,14 @@ public class ResourceController {
     private final ResourceObjectService service;
 
     @PostMapping
-    public ResponseEntity<Integer> createResourceObject(@RequestBody ResourceObject object) {
-        val result = service.save(object);
-        return ok(result);
+    public Mono<String> createResourceObject(@RequestBody ResourceObject object) {
+        Mono<String> save = service.save(object);
+        return save;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResourceObject> getResourceObject(@PathVariable Integer id) {
-        return ok(service.get(id));
+    public Mono<ResourceObject> getResourceObject(@PathVariable Integer id) {
+        return service.get(id);
     }
 
 }

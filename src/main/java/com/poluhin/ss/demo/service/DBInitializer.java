@@ -6,7 +6,9 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.poluhin.ss.demo.domain.entity.Role.ROLE_ADMIN;
@@ -17,7 +19,6 @@ import static com.poluhin.ss.demo.domain.entity.Role.ROLE_USER;
 public class DBInitializer {
 
     private final UserService userService;
-    private final RoleService roleService;
 
     @PostConstruct
     private void initDatabase() {
@@ -40,34 +41,37 @@ public class DBInitializer {
         user.setName("user");
         user.setPassword("user");
 
-        Set<RoleEntity> roleEntitySet = new HashSet<>();
-        roleEntitySet.add(roleService.findRoleByName(ROLE_USER.name()).get());
+        List<RoleEntity> roleEntitySet = new ArrayList<>();
+        roleEntitySet.add(new RoleEntity("", ROLE_USER.name()));
         user.setRoles(roleEntitySet);
         userService.addNewUser(user);
     }
 
     private boolean adminRoleExists() {
-        return roleService.roleExists("ROLE_ADMIN");
+    //    return Boolean.TRUE.equals(roleService.roleExists("ROLE_ADMIN").hasElement().block());
+        return false;
     }
 
     private void addAdminRole() {
-        RoleEntity role = new RoleEntity();
-        role.setName(ROLE_ADMIN.name());
-        roleService.addRole(role);
+//        RoleEntity role = new RoleEntity();
+//        role.setName(ROLE_ADMIN.name());
+//        roleService.addRole(role);
     }
 
     private boolean userRoleExists() {
-        return roleService.roleExists(ROLE_USER.name());
+       // return Boolean.TRUE.equals(roleService.roleExists(ROLE_USER.name()).hasElement().block());
+        return false;
     }
 
     private void addUserRole() {
-        RoleEntity role = new RoleEntity();
-        role.setName(ROLE_USER.name());
-        roleService.addRole(role);
+//        RoleEntity role = new RoleEntity();
+//        role.setName(ROLE_USER.name());
+//        roleService.addRole(role);
     }
 
     private boolean adminExists() {
-        return userService.findFirstBySpecificRoles(ROLE_ADMIN.name());
+       // return userService.findFirstBySpecificRoles(ROLE_ADMIN.name());
+        return false;
     }
 
     private void addAdmin() {
@@ -75,8 +79,8 @@ public class DBInitializer {
         admin.setName("admin");
         admin.setPassword("admin");
 
-        Set<RoleEntity> roleEntitySet = new HashSet<>();
-        roleEntitySet.add(roleService.findRoleByName(ROLE_ADMIN.name()).get());
+        List<RoleEntity> roleEntitySet = new ArrayList<>();
+        roleEntitySet.add(new RoleEntity("", ROLE_ADMIN.name()));
         admin.setRoles(roleEntitySet);
         userService.addNewUser(admin);
     }

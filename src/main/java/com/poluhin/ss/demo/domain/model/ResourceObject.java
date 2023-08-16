@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 public class ResourceObject {
 
-    private int id;
+    private String id;
     private String value;
     private String path;
 
