@@ -37,5 +37,6 @@ public class UserService implements UserDetailsService {
         }
         userEntity.setPassword(encoder.encode(userEntity.getPassword()));
         userRepository.save(userEntity).block();
+
     }
 }

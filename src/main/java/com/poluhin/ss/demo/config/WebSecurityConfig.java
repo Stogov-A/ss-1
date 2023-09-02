@@ -35,10 +35,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(a -> a.requestMatchers(new AntPathRequestMatcher("/resource")).hasRole("ADMIN"))
                 .authorizeHttpRequests(a -> a.requestMatchers(new AntPathRequestMatcher("/resource/**")).hasRole("USER"))
                 .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers(
-        new AntPathRequestMatcher("/login"))
-                                .permitAll()
-                                .anyRequest().authenticated())
+                        authorize.requestMatchers(new AntPathRequestMatcher("/login")).permitAll().anyRequest().permitAll())
                 .apply(jwtConfigurator);
 
         return http.build();

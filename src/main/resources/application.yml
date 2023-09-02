@@ -27,3 +27,17 @@ logging:
       netty:
         http:
           client: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,env,prometheus
+
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
